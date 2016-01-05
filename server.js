@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import expressSession from 'express-session'
 import passport from 'passport'
+import routes from './routes'
 import { Strategy as LocalStrategy } from 'passport-local'
 
 const port = process.env.PORT || 8080
@@ -16,7 +17,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(cookieParser())
 app.use(expressSession({
-  secret: 'my secretz are mine',
+  secret: 'z4f9182d-d884-5558-9aa3',
   resave: false,
   saveUninitialized: false
 }))
@@ -40,29 +41,6 @@ passport.deserializeUser((user, done) => {
   done(null, user)
 })
 
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/welcome',
-  failureRedirect: '/login'
-}))
-
-app.get('/login', (req, res) => {
-  res.redirect('/login.html')
-})
-
-app.get('/logout', (req, res) => {
-  req.logout()
-  res.redirect('/login')
-})
-
-app.get('/welcome', ensureAuth, (req, res) => {
-  res.send(`You are wellcome ${req.user.username}`)
-})
-
-function ensureAuth (req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-  res.redirect('/login')
-}
+app.use('/', routes)
 
 server.listen(port, () => console.log(`listen on port ${port}`))
