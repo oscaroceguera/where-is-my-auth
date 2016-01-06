@@ -31,8 +31,16 @@ passport.use(new LocalStrategy((username, password, done) => {
 
   User.findOne({ username: username}, (err, user) => {
 
-    if(password === user.password) {
-      return done(null, { username: user.username })
+    if (!user) return done(null, false, { message: 'unknow user'})
+
+    if(password === user.password){
+
+      return done(null, {
+        username: user.username,
+        nombre: user.nombre,
+        apellidos: user.apellidos
+      })
+      
     }
 
     done(null, false, { message: 'unknow user'})

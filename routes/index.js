@@ -24,7 +24,7 @@ router
     res.redirect('/login')
   })
   .get('/welcome', ensureAuth, (req, res) => {
-    res.send(`You are wellcome ${req.user.username}`)
+    res.send(`You are wellcome Usuario : ${req.user.username}, Nombre: ${req.user.nombre}, Apellidos: ${req.user.apellidos} `)
     //console.log("cookies ", req.cookies);
   })
   .get('/users', ensureAuth, UserCtrl.getUsers)
