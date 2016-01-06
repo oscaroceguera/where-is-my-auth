@@ -1,5 +1,6 @@
 import express from 'express'
 import passport from 'passport'
+import UserCtrl from '../controllers/users'
 
 const router = express.Router()
 
@@ -26,5 +27,7 @@ router
     res.send(`You are wellcome ${req.user.username}`)
     //console.log("cookies ", req.cookies);
   })
+  .get('/users', ensureAuth, UserCtrl.getUsers)
+  .post('/signup', UserCtrl.addUser)
 
 export default router

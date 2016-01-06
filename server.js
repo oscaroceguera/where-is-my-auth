@@ -6,6 +6,7 @@ import bodyParser from 'body-parser'
 import expressSession from 'express-session'
 import passport from 'passport'
 import routes from './routes'
+import mongoose from 'mongoose'
 import { Strategy as LocalStrategy } from 'passport-local'
 
 const port = process.env.PORT || 8080
@@ -43,4 +44,8 @@ passport.deserializeUser((user, done) => {
 
 app.use('/', routes)
 
-server.listen(port, () => console.log(`listen on port ${port}`))
+mongoose.connect('mongodb://localhost/userauth', (err, res) => {
+  if (err) throw err
+
+  server.listen(port, () => console.log(`listen on port ${port}`))
+})
