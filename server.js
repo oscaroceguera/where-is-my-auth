@@ -7,6 +7,7 @@ import expressSession from 'express-session'
 import passport from 'passport'
 import routes from './routes'
 import mongoose from 'mongoose'
+import User from './models/user'
 import { Strategy as LocalStrategy } from 'passport-local'
 
 const port = process.env.PORT || 8080
@@ -27,12 +28,15 @@ app.use(passport.session())
 app.use(express.static(path.join(__dirname, 'public')))
 
 passport.use(new LocalStrategy((username, password, done) => {
-  // Aqui va la logica de la base de datos
-  if(username === 'soy' && password === 'platzi') {
-    return done(null, { name: 'Super', lastname: 'User', username: 'superuser'})
-  }
 
-  done(null, false, {message: 'unknow user'})
+  User.findOne({ username: username}, (err, user) => {
+
+    if(password === user.password) {
+      return done(null, { username: user.username })
+    }
+
+    done(null, false, { message: 'unknow user'})
+  })
 }))
 
 // Serializacion
