@@ -9,11 +9,14 @@ import routes from './routes'
 import mongoose from 'mongoose'
 import User from './models/user'
 import { Strategy as LocalStrategy } from 'passport-local'
+import bcrypt from 'bcrypt'
 
 const port = process.env.PORT || 8080
 
 const app = express()
 const server = http.createServer(app)
+
+const SALT_WORK_FACTOR = 10
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
@@ -29,18 +32,22 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 passport.use(new LocalStrategy((username, password, done) => {
 
-  User.findOne({ username: username}, (err, user) => {
+  User.findOne({ username: username.trim()}, (err, user) => {
 
     if (!user) return done(null, false, { message: 'unknow user'})
 
-    if(password === user.password){
+    let pass = user.password
+
+    let isCompare = bcrypt.compareSync(password, pass)
+
+    if (isCompare){
 
       return done(null, {
         username: user.username,
         nombre: user.nombre,
         apellidos: user.apellidos
       })
-      
+
     }
 
     done(null, false, { message: 'unknow user'})

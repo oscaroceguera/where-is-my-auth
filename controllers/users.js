@@ -1,5 +1,8 @@
 import User from '../models/user'
 import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
+
+const SALT_WORK_FACTOR = 10
 
 mongoose.Promise = global.Promise
 
@@ -10,7 +13,15 @@ export default {
     let user = new User()
 
     user.username = req.body.username
-    user.password = req.body.password
+    user.nombre = req.body.nombre
+    user.apellidos = req.body.apellidos
+    user.edad = req.body.edad
+
+    const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR)
+
+    const hash = bcrypt.hashSync(req.body.password, salt)
+
+    user.password = hash
 
     user
       .save()
